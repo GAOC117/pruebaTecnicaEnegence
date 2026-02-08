@@ -1,9 +1,9 @@
 <x-app-layout>
 
     <x-header />
-   
-                <livewire:estados />
-              
+
+    <livewire:estados />
+
 
     <x-Footer />
 

@@ -13,27 +13,22 @@ use Illuminate\Support\Facades\Http;
 class Estados extends Component
 {
 
-     use WithPagination,WithoutUrlPagination;
+    use WithPagination, WithoutUrlPagination;
     protected $paginationTheme = 'bootstrap';
 
-    public $orden = 'asc';
-
-
+    public $ordenEstados = 'asc';
+    public $ordenMunicipios = 'asc';
 
     public $buscarEstado = '';
     public $buscarMunicipio = '';
 
-    public $cargandoMunicipios = false;
-
-
     public $estadoSeleccionadoId = null;
     public $estadoSeleccionado = null;
 
-  
 
+//funcion que hace consumo de API e inserta en BAse de datos
     public function sincronizar()
     {
-
 
         set_time_limit(300);
 
@@ -41,11 +36,10 @@ class Estados extends Component
 
             DB::transaction(function () {
 
+            //consumo api para los estados
                 $estadosResponse = Http::get(
                     config('services.copomex.base_url') . '/get_estados?token=' . config('services.copomex.token')
                 );
-
-
 
 
                 if (!$estadosResponse->successful()) {
@@ -66,15 +60,17 @@ class Estados extends Component
                     throw new \Exception('Respuesta inválida API estados');
                 }
 
+                //por cada estado lo inserto en la bd, uso firstOrCreate para evitar duplicados (idempotencia)
                 foreach ($estadosData['response']['estado'] as $nombreEstado) {
 
                     $estado = Estado::firstOrCreate([
                         'nombre' => $nombreEstado
                     ]);
 
+                    //la url necesita los espacios como %20
                     $estadoEncoded = rawurlencode($nombreEstado);
 
-
+                    //consumo la api para obtener los municioios
                     $municipiosResponse = Http::get(
                         config('services.copomex.base_url') . "/get_municipio_por_estado/$estadoEncoded?token=" . config('services.copomex.token')
                     );
@@ -94,7 +90,7 @@ class Estados extends Component
                     if (!isset($municipiosData['response']['municipios'])) {
                         throw new \Exception("Respuesta inválida municipios $nombreEstado");
                     }
-
+                    //inserto cada munucipio a la bd usando firstOrCreate para evitar otra vez duplicados (idempotencia)
                     foreach ($municipiosData['response']['municipios'] as $nombreMunicipio) {
 
                         Municipio::firstOrCreate([
@@ -112,74 +108,72 @@ class Estados extends Component
         }
     }
 
-
+//funcion para cuando selecciono un estado de la tabla
     public function selectEstado($id)
     {
         $this->estadoSeleccionadoId = $id;
+        $this->estadoSeleccionado = Estado::find($this->estadoSeleccionadoId)?->nombre ?? null;
         $this->buscarMunicipio = '';
         $this->resetPage('paginaMunicipios');
-     return "estado seleccionado ".$this->estadoSeleccionado;
     }
 
 
-    public function ordenar()
+//funciones para ordenar los estados o munucipios
+    public function ordenarEstados()
     {
-        $this->orden = $this->orden === 'asc' ? 'desc' : 'asc';
-           return "estado seleccionado ".$this->estadoSeleccionado;
+        $this->ordenEstados = $this->ordenEstados === 'asc' ? 'desc' : 'asc';
+        $this->resetPage('paginaEstados');
+    }
+
+    public function ordenarMunicipios()
+    {
+        $this->ordenMunicipios = $this->ordenMunicipios === 'asc' ? 'desc' : 'asc';
+        $this->resetPage('paginaMunicipios');
     }
 
 
-  
 
+//funciones para la busqueda de estados o municipios
     public function filtrarEstados()
     {
         $this->resetPage('paginaEstados');
-          return "estado seleccionado ".$this->estadoSeleccionado;
-      
     }
 
     public function filtrarMunicipios()
     {
-        
+
         $this->resetPage('paginaMunicipios');
-            return "estado seleccionado ".$this->estadoSeleccionado;
     }
+
+
 
     public function render()
     {
-
-
 
         $municipios = null; //aun no se selecciona algun estado
 
         $estados = Estado::when($this->buscarEstado, function ($query) {
             $query->where('nombre', 'LIKE', '%' . $this->buscarEstado . '%');
-        })->orderBy('nombre', $this->orden)->paginate(10, ['*'], 'paginaEstados');
+        })->orderBy('nombre', $this->ordenEstados)->paginate(10, ['*'], 'paginaEstados');
 
         if ($this->estadoSeleccionadoId) {
 
             $municipios = Municipio::where('estado_id', $this->estadoSeleccionadoId)
                 ->when($this->buscarMunicipio, function ($query) {
                     $query->where('nombre', 'LIKE', '%' . $this->buscarMunicipio . '%');
-                })->orderBy('nombre', $this->orden)->paginate(10, ['*'], 'paginaMunicipios');
-
-                $this->estadoSeleccionado = Estado::find($this->estadoSeleccionadoId)?->nombre ?? null;
-
+                })->orderBy('nombre', $this->ordenMunicipios)->paginate(10, ['*'], 'paginaMunicipios');
         }
 
 
 
 
-        
+
         return view(
             'livewire.estados',
             [
                 'estados' => $estados,
                 'municipios' => $municipios,
-                'estadoSeleccionado' => $this->estadoSeleccionado
             ]
         );
-
-           
     }
 }

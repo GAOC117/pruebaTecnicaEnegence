@@ -1,24 +1,20 @@
 <div class="container py-4">
 
-    {{-- Botón de sincronización + Estado seleccionado --}}
     <div class="mb-3 d-flex align-items-center justify-content-start">
         <button wire:click="sincronizar" class="btn btn-primary me-3" wire:loading.attr="disabled">
             Sincronizar BD con API
         </button>
 
-        {{-- Estado seleccionado destacado --}}
         @if($estadoSeleccionado)
             <div class="fs-5 fw-bold text-primary ms-3">
                 Estado seleccionado: {{ $estadoSeleccionado }}
             </div>
         @endif
 
-        {{-- Spinner --}}
         <div wire:loading wire:target="sincronizar" class="spinner-border text-primary ms-3" role="status">
             <span class="visually-hidden">Cargando...</span>
         </div>
 
-        {{-- Mensajes de sesión --}}
         @if (session()->has('success'))
             <div class="ms-3 alert alert-success mb-0 p-2">{{ session('success') }}</div>
         @endif
@@ -27,7 +23,6 @@
         @endif
     </div>
 
-    {{-- Inputs de búsqueda --}}
     <div class="row mb-2">
         <div class="col-md-6">
             <h5>Estados</h5>
@@ -54,9 +49,9 @@
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th wire:click="ordenar" style="cursor:pointer">
+                        <th wire:click="ordenarEstados" style="cursor:pointer">
                             Estado
-                            @if($orden === 'asc') &#9650; @else &#9660; @endif
+                            @if($ordenEstados === 'asc') &#9650; @else &#9660; @endif
                         </th>
                     </tr>
                 </thead>
@@ -83,7 +78,10 @@
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
-                            <th>Municipio</th>
+                           <th wire:click="ordenarMunicipios" style="cursor:pointer">
+                            Municipio
+                            @if($ordenMunicipios === 'asc') &#9650; @else &#9660; @endif
+                        </th>
                         </tr>
                     </thead>
                     <tbody>

@@ -1,59 +1,204 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Prueba Técnica – ENEGENCE
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**Desarrollado por:** Guillermo Antonio Ortiz
+**Repositorio:** [https://github.com/GAOC117/pruebaTecnicaEnegence](https://github.com/GAOC117/pruebaTecnicaEnegence)
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Descripción
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Aplicación web desarrollada en **Laravel 12** que consume el API de **COPOMEX** para obtener el catálogo de los 32 estados de México y sus municipios.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Los datos se almacenan en MySQL y se muestran en una interfaz interactiva con búsqueda, ordenamiento y paginación utilizando **Livewire** y **Bootstrap 5**.
 
-## Learning Laravel
+El objetivo es demostrar manejo de Laravel tanto en backend como frontend y el consumo de APIs externas en un flujo completo de integración.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Stack Tecnológico
 
-## Laravel Sponsors
+* Laravel 12
+* PHP 8+
+* MySQL
+* Livewire
+* Bootstrap 5
+* Arquitectura MVC
+* Laravel HTTP Client
+* Deploy en Railway
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## Demo en línea
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Aplicación desplegada en Railway:
 
-## Contributing
+[https://x01enegence.up.railway.app/](https://x01enegence.up.railway.app/)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## Instalación del proyecto
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 1. Clonar repositorio
 
-## Security Vulnerabilities
+```bash
+git clone https://github.com/GAOC117/pruebaTecnicaEnegence.git
+cd pruebaTecnicaEnegence
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 2. Instalar dependencias
 
-## License
+```bash
+composer install
+npm install
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 3. Crear base de datos
+
+Crear manualmente una base de datos en MySQL.
+
+Ejemplo:
+
+```
+prueba_enegence
+```
+
+### 4. Configurar archivo .env
+
+Copiar archivo de ejemplo y generar llave de aplicación:
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+El archivo `.env.example` ya incluye las variables necesarias.
+
+Configurar:
+
+**Datos de base de datos**
+
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=nombre_base_de_datos
+DB_USERNAME=usuario_base_de_datos
+DB_PASSWORD=password_base_de_datos
+```
+
+**Datos de API COPOMEX**
+
+```
+COPOMEX_TOKEN=token_copomex_aqui
+COPOMEX_BASE_URL=https://api.copomex.com/query
+```
+
+**Nota:** Se recomienda utilizar un token real de COPOMEX para obtener datos reales de estados y municipios.
+El token de prueba puede devolver datos aleatorios, lo que puede generar registros distintos en cada sincronización.
+
+
+Para obtener un token se debe crear una cuenta nueva, después un proyecto nuevo con el nombre que se desee y dominio cualquiera, el link para crear una cuenta es el siguiente:
+[https://api.copomex.com/panel](https://api.copomex.com/panel)
+
+### 5. Ejecutar migraciones
+
+```bash
+php artisan migrate
+```
+
+### 6. Ejecutar proyecto
+
+```bash
+php artisan serve
+```
+
+Abrir en navegador:
+
+```
+http://127.0.0.1:8000
+```
+
+---
+
+## Decisiones técnicas
+
+### Sincronización de datos
+
+Aunque la instrucción indicaba consultar municipios al hacer clic en cada estado desde el API, se optó por realizar una sincronización inicial completa y almacenar la información en base de datos.
+
+Esto permite:
+
+* Reducir consumo de créditos del API
+* Mejor rendimiento
+* Menor dependencia de la API en cada interacción
+* Arquitectura más cercana a producción
+* Disponibilidad de datos aun si el API no responde
+
+La sincronización se ejecuta manualmente mediante botón para facilitar pruebas del evaluador.
+
+Aunque se sugería el uso de DataTables, se optó por utilizar **Laravel Livewire** para la construcción de la interfaz interactiva, esto permite una integración más natural con el ecosistema de Laravel y evita la necesidad de depender de plugins externos de jQuery para la manipulación de tablas.
+
+### Idempotencia
+
+La sincronización utiliza `firstOrCreate` para evitar duplicados.
+
+Si se ejecuta nuevamente el botón de sincronización:
+
+* No se duplican registros
+* Solo se insertan nuevos si no existen
+* Si para el consumo de API ya no se tiene créditos, se muestra el mensaje correspondiente
+
+### Nota sobre token de pruebas
+
+Si se utiliza el token de pruebas de COPOMEX:
+
+* Puede devolver datos de ejemplo o aleatorios y generar nuevos registros
+
+Aun así, la aplicación mantiene integridad evitando duplicados.
+
+---
+
+## Funcionalidades
+
+* Listado de estados con paginación
+* Búsqueda en tiempo real
+* Ordenamiento
+* Visualización de municipios por estado
+* Sincronización desde API
+* Manejo de errores
+* Interfaz dinámica con Livewire
+
+---
+
+## Base de datos
+
+### Tabla estados
+
+* id
+* nombre
+* timestamps
+
+### Tabla municipios
+
+* id
+* nombre
+* estado_id
+* timestamps
+
+**Relaciones:**
+
+* Estado tiene muchos municipios
+* Municipio pertenece a estado
+
+---
+
+## Arquitectura
+
+Se utilizó arquitectura MVC junto con Livewire para mejorar la experiencia de usuario sin recargas de página y mantener integración directa con Laravel.
+
+---
+
+## Autor
+
+**Guillermo Antonio Ortiz**
+Prueba técnica ENEGENCE – 2026
